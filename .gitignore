@@ -28,3 +28,4 @@
 **/windows/
 **/web/
 **/*.log
+**/pubspec.lock
