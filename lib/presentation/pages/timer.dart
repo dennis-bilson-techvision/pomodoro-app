@@ -22,23 +22,30 @@ class _TimerPageState extends ConsumerState<TimerPage>
     with TickerProviderStateMixin {
   final _timerInterval = const Duration(seconds: 1);
   final _labels = ['Pomodoro', 'Short Break', 'Long Break'];
-  var _selectedIndex = 0, _timeInMinutes = 0, _timeInSeconds = 0;
+  var _selectedIndex = 0,
+      _timeInMinutes = 0,
+      _timeInSeconds = 0,
+      _totalTimeInMinutes = 0;
   Timer? _timer;
 
   /// Handle the tab selection
   void _onSelected(int index) {
     switch (index) {
       case 0:
-        _timeInMinutes = ref.read(timerConfigBuilderProvider).pomodoro;
+        _totalTimeInMinutes = ref.read(timerConfigBuilderProvider).pomodoro;
         break;
       case 1:
-        _timeInMinutes = ref.read(timerConfigBuilderProvider).shortBreak;
+        _totalTimeInMinutes = ref.read(timerConfigBuilderProvider).shortBreak;
         break;
       case 2:
-        _timeInMinutes = ref.read(timerConfigBuilderProvider).longBreak;
+        _totalTimeInMinutes = ref.read(timerConfigBuilderProvider).longBreak;
         break;
     }
-    setState(() => _selectedIndex = index);
+    setState(() {
+      _selectedIndex = index;
+      _timeInMinutes = _totalTimeInMinutes;
+      _timeInSeconds = 0;
+    });
   }
 
   @override
@@ -65,9 +72,12 @@ class _TimerPageState extends ConsumerState<TimerPage>
                 labels: _labels,
                 selectedIndex: _selectedIndex,
                 onSelected: _onSelected),
+
+            /// countdown timer
             TimerCountDown(
               timeInMinutes: _timeInMinutes,
               timeInSeconds: _timeInSeconds,
+              totalMinutes: _totalTimeInMinutes,
               onPauseResumeTap: () =>
                   _timer?.isActive == true ? _timer?.cancel() : _startTimer(),
             ),
@@ -85,18 +95,18 @@ class _TimerPageState extends ConsumerState<TimerPage>
 
   /// Setup the timer to countdown
   Future<void> _setupTimer() async {
+    _onSelected(_selectedIndex);
     ref.listenManual(timerConfigBuilderProvider, (previous, next) {
-      print('previous: $previous, next: $next');
       if (previous == next) return;
       switch (_selectedIndex) {
         case 0:
-          _timeInMinutes = next.pomodoro;
+          _totalTimeInMinutes = next.pomodoro;
           break;
         case 1:
-          _timeInMinutes = next.shortBreak;
+          _totalTimeInMinutes = next.shortBreak;
           break;
         case 2:
-          _timeInMinutes = next.longBreak;
+          _totalTimeInMinutes = next.longBreak;
           break;
       }
 
@@ -108,19 +118,23 @@ class _TimerPageState extends ConsumerState<TimerPage>
   /// Start the timer
   void _startTimer() async {
     _timer?.cancel();
-    _timer = Timer.periodic(
-        _timerInterval,
-        (timer) => setState(() {
-              if (_timeInSeconds > 0) {
-                _timeInSeconds--;
-              } else {
-                if (_timeInMinutes > 0) {
-                  _timeInMinutes--;
-                  _timeInSeconds = 59;
-                } else {
-                  _timer?.cancel();
-                }
-              }
-            }));
+    setState(() {
+      _timeInMinutes = _totalTimeInMinutes;
+      _timeInSeconds = 0;
+    });
+    _timer = Timer.periodic(_timerInterval, (timer) {
+      setState(() {
+        if (_timeInSeconds > 0) {
+          _timeInSeconds--;
+        } else {
+          if (_timeInMinutes > 0) {
+            _timeInMinutes--;
+            _timeInSeconds = 59;
+          } else {
+            _timer?.cancel();
+          }
+        }
+      });
+    });
   }
 }

@@ -6,12 +6,14 @@ import 'package:pomodoro/core/utils/extensions.dart';
 class TimerCountDown extends StatefulWidget {
   final int timeInMinutes;
   final int timeInSeconds;
+  final int totalMinutes;
   final VoidCallback onPauseResumeTap;
 
   const TimerCountDown({
     super.key,
     required this.timeInMinutes,
     required this.timeInSeconds,
+    required this.totalMinutes,
     required this.onPauseResumeTap,
   });
 
@@ -24,33 +26,37 @@ class _TimerCountDownState extends State<TimerCountDown>
   var _paused = false;
   late Timer _timer;
 
+  // Remaining time in seconds
+  late int _remainingTimeInSeconds = _totalTimeInSeconds;
+
   // Total time in seconds
   int get _totalTimeInSeconds =>
-      widget.timeInMinutes * 60 + widget.timeInSeconds;
-
-  // Remaining time in seconds
-  late int _remainingTimeInSeconds;
+      widget.totalMinutes * 60 + widget.timeInSeconds;
 
   //  Calculate the progress of the timer (0.0 to 1.0) that updates every minute
-  double get _calculatedProgress => _totalTimeInSeconds == 0
-      ? 0
-      : 1 - (_remainingTimeInSeconds / _totalTimeInSeconds);
+  double get _calculatedProgress {
+    print('total time => $_totalTimeInSeconds');
+    print('remaining time => $_remainingTimeInSeconds');
+
+    return _totalTimeInSeconds == 0
+        ? 0
+        : _remainingTimeInSeconds / _totalTimeInSeconds;
+  }
 
   void _updateRemainingTime() {
-    if (_paused || _remainingTimeInSeconds == 0) return;
+    if (_paused) return;
     if (_remainingTimeInSeconds > 0) {
       setState(() => _remainingTimeInSeconds--);
     } else {
       widget.onPauseResumeTap.call();
     }
 
-    print('remaining time: $_remainingTimeInSeconds');
+    print('remaining time in _updateRemainingTime: $_remainingTimeInSeconds');
   }
 
   @override
   void initState() {
     super.initState();
-    _remainingTimeInSeconds = _totalTimeInSeconds;
     _timer = Timer.periodic(
         const Duration(seconds: 1), (_) => _updateRemainingTime());
   }
