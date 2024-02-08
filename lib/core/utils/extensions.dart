@@ -13,5 +13,5 @@ extension ThemeX on BuildContext {
 
   double get height => mediaQuery.size.height;
 
-
+  bool get isTablet => mediaQuery.size.shortestSide >= 600;
 }

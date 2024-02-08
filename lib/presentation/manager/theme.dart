@@ -29,6 +29,16 @@ class AppThemeBuilder extends _$AppThemeBuilder {
               ? TextThemePref.spaceMono
               : TextThemePref.kumbhSans;
 
+  AppThemePref getPreferredAppTheme() {
+    if (state.colorScheme.primary == kPurpleTheme().colorScheme.primary) {
+      return AppThemePref.purple;
+    } else if (state.colorScheme.primary == kGreenTheme().colorScheme.primary) {
+      return AppThemePref.green;
+    } else {
+      return AppThemePref.orange;
+    }
+  }
+
   /// [switchTheme] is a method that switches the current theme
   void switchTheme(AppThemePref themePref) {
     switch (themePref) {

@@ -9,7 +9,7 @@ const _kBackgroundColor = Color(0xFF1E213F);
 const _kWhiteColor = Color(0xFFFFFFFF);
 const _kGreyColor = Color(0xFFEFF1FA);
 const _kDividerColor = Color(0xFFE3E1E1);
-const _kLightGreyColor = Color(0xFFD7E0FF);
+// const _kLightGreyColor = Color(0xFFD7E0FF);
 const _kDarkBackgroundColor = Color(0xFF161932);
 
 /// endregion
@@ -23,8 +23,8 @@ final kSpaceMono = _buildTextTheme(GoogleFonts.spaceMonoTextTheme());
 
 /// region app theme
 ThemeData kOrangeTheme([TextTheme? textTheme]) => ThemeData(
-      colorScheme: _buildColorScheme(
-          primary: _kOrangeColor, onPrimary: _kDarkBackgroundColor),
+      colorScheme:
+          _buildColorScheme(primary: _kOrangeColor, onPrimary: _kWhiteColor),
       textTheme: _buildTextTheme(textTheme ?? kKumbhSans),
       scaffoldBackgroundColor: _kBackgroundColor,
       appBarTheme: _buildAppBarTheme(),
@@ -34,8 +34,18 @@ ThemeData kOrangeTheme([TextTheme? textTheme]) => ThemeData(
           ),
           backgroundColor: _kOrangeColor,
           foregroundColor: _kDarkBackgroundColor),
+      disabledColor: _kGreyColor,
       dividerTheme: const DividerThemeData(color: _kDividerColor),
-      useMaterial3: true,
+      iconTheme: const IconThemeData(color: _kBackgroundColor),
+      dialogTheme: DialogTheme(
+        backgroundColor: _kWhiteColor,
+        titleTextStyle:
+            kKumbhSans.titleMedium?.copyWith(color: _kBackgroundColor),
+        contentTextStyle:
+            kKumbhSans.bodyMedium?.copyWith(color: _kBackgroundColor),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      useMaterial3: false,
     );
 
 ThemeData kPurpleTheme([TextTheme? textTheme]) => ThemeData(
@@ -50,7 +60,18 @@ ThemeData kPurpleTheme([TextTheme? textTheme]) => ThemeData(
           ),
           backgroundColor: _kPurpleColor,
           foregroundColor: _kDarkBackgroundColor),
-      useMaterial3: true,
+      disabledColor: _kGreyColor,
+      dividerTheme: const DividerThemeData(color: _kDividerColor),
+      iconTheme: const IconThemeData(color: _kBackgroundColor),
+      dialogTheme: DialogTheme(
+        backgroundColor: _kWhiteColor,
+        titleTextStyle:
+            kKumbhSans.titleMedium?.copyWith(color: _kBackgroundColor),
+        contentTextStyle:
+            kKumbhSans.bodyMedium?.copyWith(color: _kBackgroundColor),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      useMaterial3: false,
     );
 
 ThemeData kGreenTheme([TextTheme? textTheme]) => ThemeData(
@@ -65,7 +86,18 @@ ThemeData kGreenTheme([TextTheme? textTheme]) => ThemeData(
           ),
           backgroundColor: _kGreenColor,
           foregroundColor: _kDarkBackgroundColor),
-      useMaterial3: true,
+      disabledColor: _kGreyColor,
+      dividerTheme: const DividerThemeData(color: _kDividerColor),
+      iconTheme: const IconThemeData(color: _kBackgroundColor),
+      dialogTheme: DialogTheme(
+        backgroundColor: _kWhiteColor,
+        titleTextStyle:
+            kKumbhSans.titleMedium?.copyWith(color: _kBackgroundColor),
+        contentTextStyle:
+            kKumbhSans.bodyMedium?.copyWith(color: _kBackgroundColor),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      useMaterial3: false,
     );
 
 AppBarTheme _buildAppBarTheme([TextTheme? baseTextTheme]) => AppBarTheme(
@@ -81,59 +113,72 @@ TextTheme _buildTextTheme(TextTheme baseTheme) => baseTheme.copyWith(
       displayLarge: baseTheme.displayLarge?.copyWith(
         fontSize: 120,
         fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       displayMedium: baseTheme.displayMedium?.copyWith(
         fontSize: 34,
         fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       displaySmall: baseTheme.displaySmall?.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       headlineLarge: baseTheme.headlineLarge?.copyWith(
         fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       headlineMedium: baseTheme.headlineMedium?.copyWith(
+        fontSize: 20,
         fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       headlineSmall: baseTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        fontSize: 15,
+        letterSpacing: 4.23,
+        fontWeight: FontWeight.bold,
+        color: _kBackgroundColor,
       ),
       titleLarge: baseTheme.titleLarge?.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
+      ),
+      titleMedium: baseTheme.titleMedium?.copyWith(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: _kBackgroundColor,
       ),
       bodyLarge: baseTheme.bodyLarge?.copyWith(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       bodyMedium: baseTheme.bodyMedium?.copyWith(
         fontSize: 15,
-        fontWeight: FontWeight.w400,
-        color: _kWhiteColor,
+        fontWeight: FontWeight.bold,
+        color: _kBackgroundColor,
       ),
       labelLarge: baseTheme.labelLarge?.copyWith(
-        fontSize: 14,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: _kBackgroundColor,
+      ),
+      labelMedium: baseTheme.labelMedium?.copyWith(
+        fontSize: 15,
         fontWeight: FontWeight.w700,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
       bodySmall: baseTheme.bodySmall?.copyWith(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: _kWhiteColor,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: _kBackgroundColor,
       ),
       labelSmall: baseTheme.labelSmall?.copyWith(
         fontSize: 10,
         fontWeight: FontWeight.w400,
-        color: _kWhiteColor,
+        color: _kBackgroundColor,
       ),
     );
 

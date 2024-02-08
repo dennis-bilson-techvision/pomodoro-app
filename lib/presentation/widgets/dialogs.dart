@@ -4,136 +4,228 @@ import 'package:pomodoro/core/app/theme.dart';
 import 'package:pomodoro/core/utils/extensions.dart';
 import 'package:pomodoro/presentation/manager/theme.dart';
 import 'package:pomodoro/presentation/manager/timer.dart';
+import 'package:pomodoro/presentation/widgets/duration_picker.dart';
 
 Future<void> showSettingsDialog(WidgetRef ref) async {
   var context = ref.context;
-  var themeProvider = ref.read(appThemeBuilderProvider.notifier);
 
-  void switchTheme(AppThemePref themePref) {
-    themeProvider.switchTheme(themePref);
-    context.navigator.pop();
-  }
+  // get the current theme provider & the selected theme and text preferences
+  var themeProvider = ref.read(appThemeBuilderProvider.notifier),
+      selectedThemePref = themeProvider.getPreferredAppTheme(),
+      selectedTextThemePref = themeProvider.getPreferredTextTheme();
 
-  void switchTextTheme(TextThemePref ttPref) {
-    themeProvider.switchTextTheme(ttPref);
-    context.navigator.pop();
-  }
-
+  // show the settings dialog
   await showDialog(
     context: context,
     useRootNavigator: true,
     builder: (ctx) => AlertDialog(
       contentPadding: const EdgeInsets.fromLTRB(12, 16, 12, 24),
-      backgroundColor: context.colorScheme.surface,
-      content: SizedBox(
-        width: context.width,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Settings',
-                  style: context.theme.textTheme.bodyLarge
-                      ?.copyWith(color: context.colorScheme.onSurface),
+      backgroundColor: Colors.transparent,
+      content: StatefulBuilder(
+          builder: (context, setState) => SizedBox(
+                width: context.width,
+                height: context.height * (context.isTablet ? 0.6 : 0.8),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Settings',
+                                      style: context
+                                          .theme.textTheme.headlineMedium),
+                                  IconButton(
+                                      onPressed: context.navigator.pop,
+                                      icon: const Icon(Icons.close),
+                                      tooltip: 'Close',
+                                      color: context.theme.iconTheme.color),
+                                ],
+                              ),
+                            ),
+                            const Divider(height: 8),
+                            SingleChildScrollView(
+                              padding: const EdgeInsets.only(
+                                  top: 24, left: 16, right: 16),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Time (Minutes)'.toUpperCase(),
+                                    style:
+                                        context.theme.textTheme.headlineSmall,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTimerConfigTile(
+                                    ctx,
+                                    label: 'pomodoro',
+                                    value: ref
+                                        .read(timerConfigBuilderProvider)
+                                        .pomodoro,
+                                    onChanged: (value) => ref
+                                        .read(
+                                            timerConfigBuilderProvider.notifier)
+                                        .setPomodoro(value),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTimerConfigTile(
+                                    ctx,
+                                    label: 'short break',
+                                    value: ref
+                                        .read(timerConfigBuilderProvider)
+                                        .shortBreak,
+                                    onChanged: (value) => ref
+                                        .read(
+                                            timerConfigBuilderProvider.notifier)
+                                        .setShortBreak(value),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTimerConfigTile(
+                                    ctx,
+                                    label: 'long break',
+                                    value: ref
+                                        .read(timerConfigBuilderProvider)
+                                        .longBreak,
+                                    onChanged: (value) => ref
+                                        .read(
+                                            timerConfigBuilderProvider.notifier)
+                                        .setLongBreak(value),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  const Divider(height: 8),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'Font'.toUpperCase(),
+                                    style:
+                                        context.theme.textTheme.headlineSmall,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildFontPickerTile(ref,
+                                          label: 'Kumbh Sans',
+                                          selected: selectedTextThemePref ==
+                                              TextThemePref.kumbhSans,
+                                          value: TextThemePref.kumbhSans,
+                                          onChanged: (value) => setState(() =>
+                                              selectedTextThemePref = value)),
+                                      _buildFontPickerTile(ref,
+                                          label: 'Roboto Slab',
+                                          selected: selectedTextThemePref ==
+                                              TextThemePref.robotoSlab,
+                                          value: TextThemePref.robotoSlab,
+                                          onChanged: (value) => setState(() =>
+                                              selectedTextThemePref = value)),
+                                      _buildFontPickerTile(ref,
+                                          label: 'Space Mono',
+                                          selected: selectedTextThemePref ==
+                                              TextThemePref.spaceMono,
+                                          value: TextThemePref.spaceMono,
+                                          onChanged: (value) => setState(() =>
+                                              selectedTextThemePref = value)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 24),
+                                  const Divider(height: 8),
+                                  const SizedBox(height: 24),
+                                  Text('Color'.toUpperCase(),
+                                      style: context
+                                          .theme.textTheme.headlineSmall),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildColorPickerTile(ref,
+                                          value: kOrangeTheme()
+                                              .colorScheme
+                                              .primary,
+                                          selected: selectedThemePref ==
+                                              AppThemePref.orange,
+                                          onChanged: () => setState(() =>
+                                              selectedThemePref =
+                                                  AppThemePref.orange)),
+                                      _buildColorPickerTile(ref,
+                                          value:
+                                              kGreenTheme().colorScheme.primary,
+                                          selected: selectedThemePref ==
+                                              AppThemePref.green,
+                                          onChanged: () => setState(() =>
+                                              selectedThemePref =
+                                                  AppThemePref.green)),
+                                      _buildColorPickerTile(ref,
+                                          value: kPurpleTheme()
+                                              .colorScheme
+                                              .primary,
+                                          selected: selectedThemePref ==
+                                              AppThemePref.purple,
+                                          onChanged: () => setState(() =>
+                                              selectedThemePref =
+                                                  AppThemePref.purple)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -(context.height * 0.03),
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            // apply the selected theme & text preferences
+                            themeProvider
+                              ..switchTheme(selectedThemePref)
+                              ..switchTextTheme(selectedTextThemePref);
+                            context.navigator.pop();
+                          },
+                          child: Container(
+                            width:
+                                context.width * (context.isTablet ? 0.2 : 0.35),
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            decoration: BoxDecoration(
+                                color: context.colorScheme.primary,
+                                borderRadius: BorderRadius.circular(100)),
+                            alignment: Alignment.center,
+                            child: Text('Apply',
+                                style: context.theme.textTheme.labelLarge
+                                    ?.copyWith(
+                                        color: context.colorScheme.onPrimary)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                    onPressed: context.navigator.pop,
-                    icon: const Icon(Icons.close),
-                    tooltip: 'Close',
-                    color: context.colorScheme.onSurface),
-              ],
-            ),
-            const Divider(height: 8, thickness: 1),
-            const SizedBox(height: 12),
-            Text(
-              'Time (Minutes)'.toUpperCase(),
-              style: context.theme.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.onSurface,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            _buildTimerConfigTile(
-              ctx,
-              label: 'pomodoro',
-              value: ref.read(timerConfigBuilderProvider).pomodoro,
-              onChanged: (value) => ref
-                  .read(timerConfigBuilderProvider.notifier)
-                  .setPomodoro(value),
-            ),
-            _buildTimerConfigTile(
-              ctx,
-              label: 'short break',
-              value: ref.read(timerConfigBuilderProvider).shortBreak,
-              onChanged: (value) => ref
-                  .read(timerConfigBuilderProvider.notifier)
-                  .setShortBreak(value),
-            ),
-            _buildTimerConfigTile(
-              ctx,
-              label: 'long break',
-              value: ref.read(timerConfigBuilderProvider).longBreak,
-              onChanged: (value) => ref
-                  .read(timerConfigBuilderProvider.notifier)
-                  .setLongBreak(value),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Font'.toUpperCase(),
-              style: context.theme.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.onSurface,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildFontPickerTile(ref,
-                    label: 'Kumbh Sans',
-                    value: TextThemePref.kumbhSans,
-                    onChanged: switchTextTheme),
-                _buildFontPickerTile(ref,
-                    label: 'Roboto Slab',
-                    value: TextThemePref.robotoSlab,
-                    onChanged: switchTextTheme),
-                _buildFontPickerTile(ref,
-                    label: 'Space Mono',
-                    value: TextThemePref.spaceMono,
-                    onChanged: switchTextTheme),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Color'.toUpperCase(),
-              style: context.theme.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.onSurface,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildColorPickerTile(ref,
-                    value: kOrangeTheme().colorScheme.primary,
-                    onChanged: (color) => switchTheme(AppThemePref.orange)),
-                _buildColorPickerTile(ref,
-                    value: kGreenTheme().colorScheme.primary,
-                    onChanged: (color) => switchTheme(AppThemePref.green)),
-                _buildColorPickerTile(ref,
-                    value: kPurpleTheme().colorScheme.primary,
-                    onChanged: (color) => switchTheme(AppThemePref.purple)),
-              ],
-            ),
-          ],
-        ),
-      ),
+              )),
     ),
   );
 }
@@ -142,22 +234,20 @@ Widget _buildTimerConfigTile(BuildContext context,
         {required String label,
         required int? value,
         required void Function(int?) onChanged}) =>
-    ListTile(
-      title: Text(
-        label,
-        style: context.theme.textTheme.bodyMedium?.copyWith(
-            color: context.colorScheme.onSurface, fontWeight: FontWeight.bold),
-      ),
-      trailing: DropdownButton<int>(
-        value: value,
-        onChanged: onChanged,
-        items: List.generate(60, (index) => index + 1)
-            .map((e) => DropdownMenuItem<int>(
-                  value: e,
-                  child: Text(e.toString()),
-                ))
-            .toList(),
-      ),
+    Row(
+      children: [
+        Text(
+          label,
+          style: context.theme.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurface,
+              fontWeight: FontWeight.bold),
+        ),
+        const Spacer(),
+        DurationPicker(
+          onDurationChanged: onChanged,
+          initialValue: value,
+        ),
+      ],
     );
 
 Widget _buildFontPickerTile(
@@ -165,10 +255,8 @@ Widget _buildFontPickerTile(
   required String label,
   required TextThemePref value,
   required void Function(TextThemePref) onChanged,
+  required bool selected,
 }) {
-  var selected =
-      ref.read(appThemeBuilderProvider.notifier).getPreferredTextTheme() ==
-          value;
   // build the text theme based on the selected value
   TextTheme textTheme;
   switch (value) {
@@ -193,13 +281,13 @@ Widget _buildFontPickerTile(
         decoration: BoxDecoration(
           color: selected
               ? ref.context.colorScheme.background
-              : ref.context.colorScheme.surface,
+              : ref.context.theme.disabledColor,
           borderRadius: BorderRadius.circular(100),
         ),
         alignment: Alignment.center,
         child: Text(
           'Aa',
-          style: textTheme.titleMedium?.copyWith(
+          style: textTheme.labelMedium?.copyWith(
               color: selected
                   ? ref.context.colorScheme.onBackground
                   : ref.context.colorScheme.onSurface,
@@ -213,15 +301,14 @@ Widget _buildFontPickerTile(
 Widget _buildColorPickerTile(
   WidgetRef ref, {
   required Color value,
-  required void Function(Color) onChanged,
+  required void Function() onChanged,
+  required bool selected,
 }) {
-  var selected =
-      ref.watch(appThemeBuilderProvider).colorScheme.primary == value;
-  var iconColor = value.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  var iconColor = value.computeLuminance() > 0.5 ? Colors.white : Colors.black;
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8),
     child: GestureDetector(
-      onTap: () => onChanged(value),
+      onTap: onChanged,
       child: AnimatedContainer(
         height: 48,
         width: 48,
