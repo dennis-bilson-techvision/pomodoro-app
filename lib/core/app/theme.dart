@@ -111,13 +111,13 @@ AppBarTheme _buildAppBarTheme([TextTheme? baseTextTheme]) => AppBarTheme(
 
 TextTheme _buildTextTheme(TextTheme baseTheme) => baseTheme.copyWith(
       displayLarge: baseTheme.displayLarge?.copyWith(
-        fontSize: 120,
+        fontSize: 96,
         fontWeight: FontWeight.w700,
         color: _kBackgroundColor,
       ),
       displayMedium: baseTheme.displayMedium?.copyWith(
-        fontSize: 34,
-        fontWeight: FontWeight.w700,
+        fontSize: 72,
+        fontWeight: FontWeight.w900,
         color: _kBackgroundColor,
       ),
       displaySmall: baseTheme.displaySmall?.copyWith(
@@ -204,6 +204,7 @@ ColorScheme _buildColorScheme({
       surface: surface,
       onSurface: onSurface,
       onError: onError,
+      secondaryContainer: const Color(0xff2e32fe),
     );
 
 /// endregion

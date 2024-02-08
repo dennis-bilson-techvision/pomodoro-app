@@ -16,7 +16,7 @@ class DurationPicker extends StatefulWidget {
 }
 
 class _DurationPickerState extends State<DurationPicker> {
-  late var _durationInSeconds = widget.initialValue ?? 0;
+  late var _durationInMinutes = widget.initialValue ?? 0;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -32,7 +32,7 @@ class _DurationPickerState extends State<DurationPicker> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '$_durationInSeconds',
+              '$_durationInMinutes',
               style: context.theme.textTheme.labelLarge
                   ?.copyWith(color: context.colorScheme.onSurface),
             ),
@@ -42,8 +42,8 @@ class _DurationPickerState extends State<DurationPicker> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    var updatedValue = ++_durationInSeconds;
-                    setState(() => _durationInSeconds = updatedValue);
+                    var updatedValue = ++_durationInMinutes;
+                    setState(() => _durationInMinutes = updatedValue);
                     widget.onDurationChanged(updatedValue);
                   },
                   child: RotatedBox(
@@ -55,9 +55,9 @@ class _DurationPickerState extends State<DurationPicker> {
                 const SizedBox(height: 6),
                 GestureDetector(
                   onTap: () {
-                    if (_durationInSeconds == 0) return;
-                    var updatedValue = --_durationInSeconds;
-                    setState(() => _durationInSeconds = updatedValue);
+                    if (_durationInMinutes == 0) return;
+                    var updatedValue = --_durationInMinutes;
+                    setState(() => _durationInMinutes = updatedValue);
                     widget.onDurationChanged(updatedValue);
                   },
                   child: RotatedBox(
