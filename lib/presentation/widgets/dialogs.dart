@@ -233,7 +233,7 @@ Future<void> showSettingsDialog(WidgetRef ref) async {
 Widget _buildTimerConfigTile(BuildContext context,
         {required String label,
         required int? value,
-        required void Function(int?) onChanged}) =>
+        required ValueChanged<int?> onChanged}) =>
     Row(
       children: [
         Text(
@@ -254,7 +254,7 @@ Widget _buildFontPickerTile(
   WidgetRef ref, {
   required String label,
   required TextThemePref value,
-  required void Function(TextThemePref) onChanged,
+  required ValueChanged<TextThemePref> onChanged,
   required bool selected,
 }) {
   // build the text theme based on the selected value
@@ -301,7 +301,7 @@ Widget _buildFontPickerTile(
 Widget _buildColorPickerTile(
   WidgetRef ref, {
   required Color value,
-  required void Function() onChanged,
+  required VoidCallback onChanged,
   required bool selected,
 }) {
   var iconColor = value.computeLuminance() > 0.5 ? Colors.white : Colors.black;

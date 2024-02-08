@@ -171,8 +171,8 @@ TextTheme _buildTextTheme(TextTheme baseTheme) => baseTheme.copyWith(
         color: _kBackgroundColor,
       ),
       bodySmall: baseTheme.bodySmall?.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
         color: _kBackgroundColor,
       ),
       labelSmall: baseTheme.labelSmall?.copyWith(
@@ -185,10 +185,10 @@ TextTheme _buildTextTheme(TextTheme baseTheme) => baseTheme.copyWith(
 // define the color scheme
 ColorScheme _buildColorScheme({
   Color primary = _kOrangeColor,
-  Color secondary = _kPurpleColor,
+  Color secondary = _kDarkBackgroundColor,
   Color background = _kBackgroundColor,
   Color surface = _kWhiteColor,
-  Color onPrimary = _kWhiteColor,
+  Color onPrimary = _kDarkBackgroundColor,
   Color onSecondary = _kWhiteColor,
   Color onBackground = _kWhiteColor,
   Color onSurface = _kDarkBackgroundColor,
