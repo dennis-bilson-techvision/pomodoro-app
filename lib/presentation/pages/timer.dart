@@ -22,7 +22,7 @@ class _TimerPageState extends ConsumerState<TimerPage>
     with TickerProviderStateMixin {
   final _timerInterval = const Duration(seconds: 1);
   final _labels = ['Pomodoro', 'Short Break', 'Long Break'];
-  var _selectedIndex = 0, _timeInMinutes = 0;
+  var _selectedIndex = 0, _timeInMinutes = 0, _timeInSeconds = 0;
   Timer? _timer;
 
   /// Handle the tab selection
@@ -67,13 +67,9 @@ class _TimerPageState extends ConsumerState<TimerPage>
                 onSelected: _onSelected),
             TimerCountDown(
               timeInMinutes: _timeInMinutes,
-              onPauseResumeTap: () {
-                if (_timer?.isActive == true) {
-                  _timer?.cancel();
-                } else {
-                  _startTimer();
-                }
-              },
+              timeInSeconds: _timeInSeconds,
+              onPauseResumeTap: () =>
+                  _timer?.isActive == true ? _timer?.cancel() : _startTimer(),
             ),
           ],
         ),
@@ -105,26 +101,26 @@ class _TimerPageState extends ConsumerState<TimerPage>
       }
 
       // restart the timer when the value changes
-      _timer?.cancel();
       _startTimer();
-    });
-
-    _timer = Timer.periodic(_timerInterval, (timer) {
-      if (_timeInMinutes > 0) {
-        setState(() => _timeInMinutes--);
-      } else {
-        timer.cancel();
-      }
     });
   }
 
   /// Start the timer
   void _startTimer() async {
-    print('starting timer with $_timeInMinutes');
+    _timer?.cancel();
     _timer = Timer.periodic(
         _timerInterval,
-        (timer) => _timeInMinutes > 0
-            ? setState(() => _timeInMinutes--)
-            : timer.cancel());
+        (timer) => setState(() {
+              if (_timeInSeconds > 0) {
+                _timeInSeconds--;
+              } else {
+                if (_timeInMinutes > 0) {
+                  _timeInMinutes--;
+                  _timeInSeconds = 59;
+                } else {
+                  _timer?.cancel();
+                }
+              }
+            }));
   }
 }
