@@ -23,8 +23,10 @@ class TimerCountDown extends StatefulWidget {
 
 class _TimerCountDownState extends State<TimerCountDown>
     with SingleTickerProviderStateMixin {
-  var _paused = false;
+  var _paused = true;
   late Timer _timer;
+  late final _dimensions =
+      context.isTablet ? context.width * 0.65 : context.width * 0.8;
 
   // Remaining time in seconds
   late int _remainingTimeInSeconds = _totalTimeInSeconds;
@@ -35,12 +37,8 @@ class _TimerCountDownState extends State<TimerCountDown>
 
   //  Calculate the progress of the timer (0.0 to 1.0) that updates every minute
   double get _calculatedProgress {
-    print('total time => $_totalTimeInSeconds');
-    print('remaining time => $_remainingTimeInSeconds');
-
-    return _totalTimeInSeconds == 0
-        ? 0
-        : _remainingTimeInSeconds / _totalTimeInSeconds;
+    if (_remainingTimeInSeconds == 0) return 0.0;
+    return 1 - (_remainingTimeInSeconds / _totalTimeInSeconds);
   }
 
   void _updateRemainingTime() {
@@ -74,8 +72,8 @@ class _TimerCountDownState extends State<TimerCountDown>
           widget.onPauseResumeTap.call();
         },
         child: Container(
-          width: context.width * 0.8,
-          height: context.width * 0.8,
+          width: _dimensions,
+          height: _dimensions,
           clipBehavior: Clip.antiAlias,
           margin: EdgeInsets.only(top: context.height * 0.1),
           decoration: BoxDecoration(
@@ -121,8 +119,8 @@ class _TimerCountDownState extends State<TimerCountDown>
           shape: BoxShape.circle,
           color: context.colorScheme.secondary,
         ),
-        width: context.width * 0.7,
-        height: context.width * 0.7,
+        width: _dimensions - 16,
+        height: _dimensions - 16,
         child: CircularProgressIndicator(
           value: _calculatedProgress,
           strokeCap: StrokeCap.round,
@@ -146,7 +144,7 @@ class _TimerCountDownState extends State<TimerCountDown>
             ),
             const SizedBox(height: 8),
             Text(
-              (_paused ? 'Pause' : 'Start').toUpperCase(),
+              (_paused ? 'Start' : 'Pause').toUpperCase(),
               style: context.theme.textTheme.headlineSmall
                   ?.copyWith(color: context.colorScheme.onSecondary),
             ),
